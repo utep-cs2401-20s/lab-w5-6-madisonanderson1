@@ -52,8 +52,6 @@ public class SnakeGame {
                             tail[0] = row;
                             tail[1] = col;
                         }
-                        // if only one neighbor and not equal
-                        // return an array containing the tail x and y position and the snake length
                     }
                 }
             }
@@ -61,5 +59,7 @@ public class SnakeGame {
         tail[3] = length;
         return tail;
     }
+
+
 
 }
