@@ -137,7 +137,7 @@ public class SnakeGameTester {
         //new snake shape and head position
         SnakeGame snake = new SnakeGame(test, 1, 0);
         int[] expected = {3,2,7};
-        assertArrayEquals(expected, snake.findTailExhaustive()); //test passed on first try
+        assertArrayEquals(expected, snake.findTailExhaustive()); //test passed on first try and recieved expected
     }
 
 }
