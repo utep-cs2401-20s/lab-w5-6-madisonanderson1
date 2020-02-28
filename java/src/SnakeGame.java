@@ -5,17 +5,7 @@ public class SnakeGame {
     private static int recursiveChecks;
     int lengthR = 0;
     public static void main(String[] args) {
-        boolean[][] test = {{true, true, true, false},
-                {true, false, true, false},
-                {true, false, true, false},
-                {true, false, true, false}
-        };
 
-
-        SnakeGame snake = new SnakeGame(test, 3, 0);
-        for (int i = 0; i < snake.findTailRecursive().length; i++) {
-            System.out.println(snake.findTailRecursive()[i]);
-        }
     }
 
     public SnakeGame() {
