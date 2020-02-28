@@ -3,8 +3,7 @@ public class SnakeGame {
     int[] headPosition = new int[2];
     private static int exhaustiveChecks;
     private static int recursiveChecks;
-
-
+    int lengthR = 0;
     public static void main(String[] args) {
         boolean[][] test = {{true, true, true, false},
                 {true, false, true, false},
@@ -12,10 +11,10 @@ public class SnakeGame {
                 {true, false, true, false}
         };
 
+
         SnakeGame snake = new SnakeGame(test, 3, 0);
-        // System.out.println(snake.findTailExhaustive());
-        for (int i = 0; i < snake.findTailExhaustive().length; i++) {
-            System.out.println(snake.findTailExhaustive()[i]);
+        for (int i = 0; i < snake.findTailRecursive().length; i++) {
+            System.out.println(snake.findTailRecursive()[i]);
         }
     }
 
@@ -38,8 +37,22 @@ public class SnakeGame {
         headPosition[1] = y;
     }
 
+
+    public void resetCounters(){
+        recursiveChecks = 0;
+        exhaustiveChecks = 0;
+    }
+
+    public static int getExhaustiveChecks() {
+        return exhaustiveChecks;
+    }
+
+    public static int getRecursiveChecks() {
+        return recursiveChecks;
+    }
+
     public int[] findTailExhaustive() {
-        // reset counter
+        resetCounters();
         int length = 0;
         int tailRow = -1;
         int tailCol = -1;
@@ -64,7 +77,7 @@ public class SnakeGame {
 
     public int neighbors(int row, int col) {
         int neighbors = 0;
-        if (row != headPosition[0] && col != headPosition[1]) {
+        if (row != headPosition[0] || col != headPosition[1]) {
             if (row - 1 >= 0 && row - 1 < game.length) {
                 if (game[row - 1][col] == true) {
                     neighbors += 1;
@@ -90,79 +103,70 @@ public class SnakeGame {
     }
 
 
+
     public int[] findTailRecursive() {
+        resetCounters();
         return findTailRecursive(headPosition, headPosition);
     }
 
+
+    public int[] findNeighborPosition(int[] previousPosition, int[] currentPosition){
+        int cRow = currentPosition[0];
+        int cCol = currentPosition[1];
+        int pRow = previousPosition[0];
+        int pCol = previousPosition[1];
+        int[] position = new int[2];
+        if (cRow - 1 >= 0 && cRow - 1 < game.length) {
+            if (game[cRow - 1][cCol] == true && (cRow - 1 != pRow || cCol != pCol)) {
+                position[0] = cRow - 1;
+                position[1] = cCol;
+                return position;
+            }
+        }
+        if (cRow + 1 >= 0 && cRow + 1 < game.length) {
+            if (game[cRow + 1][cCol] == true && (cRow + 1 != pRow || cCol != pCol)) {
+                position[0] = cRow + 1;
+                position[1] = cCol;
+                return position;
+            }
+        }
+        if (cCol - 1 >= 0 && cCol - 1 < game.length) {
+            if (game[cRow][cCol - 1] == true && (cRow != pRow || cCol - 1 != pCol)) {
+                position[0] = cRow;
+                position[1] = cCol - 1;
+                return position;
+            }
+        }
+        if (cCol + 1 >= 0 && cCol + 1 < game.length) {
+            if (game[cRow][cCol + 1] == true && (cRow != pRow || cCol + 1 != pCol)) {
+                position[0] = cRow;
+                position[1] = cCol + 1;
+                return position;
+            }
+        }
+        return position;
+    }
+
+
     public int[] findTailRecursive(int[] previousPosition, int[] currentPosition) {
-        int length = 0;
-        int row = previousPosition[0];
-        int col = previousPosition[1];
-        int[] cp = new int[2];
-        int tailRow = -1;
-        int tailCol = -1;
         int[] tail = new int[3];
-        if (row - 1 >= 0 && row - 1 < game.length) {
-            if (game[row - 1][col] == true) {
-                length = length + 1;
-                if ((neighbors(row-1, col) < 2) && (row - 1) != headPosition[0] || col != headPosition[1]) {
-                    tail[0] = row - 1;
-                    tail[1] = col;
-                    tail[2] = length;
-                    return tail;
-                }
-                cp[0] = row - 1;
-                cp[1] = col;
-                findTailRecursive(currentPosition, cp);
-            }
-        }
-        if (col - 1 >= 0 && col - 1 < game.length) {
-            if (game[row][col - 1] == true) {
-                if (row != previousPosition[0] || (col -1) != previousPosition[1]) {
-                    length = length + 1;
-                    if ((neighbors(row,col-1) <2) && (row) != headPosition[0] || col - 1 != headPosition[1]) {
-                        tail[0] = row;
-                        tail[1] = col - 1;
-                        tail[2] = length;
-                        return tail;
-                    }
-                    cp[0] = row;
-                    cp[1] = col - 1;
-                    findTailRecursive(currentPosition, cp);
-                }
-            }
-        }
-        if (col + 1 >= 0 && col + 1 < game.length) {
-            if (game[row][col + 1] == true) {
-                if (row != previousPosition[0] || (col +1) != previousPosition[1]) {
-                    length = length + 1;
-                    if ((neighbors(row, col+1)<2) && (row != headPosition[0] || (col + 1) != headPosition[1])) {
-                        tail[0] = row;
-                        tail[1] = col + 1;
-                        tail[2] = length;
-                        return tail;
-                    }
-                    cp[0] = row;
-                    cp[1] = col + 1;
-                    findTailRecursive(currentPosition, cp);
-                }
-            }
-        }
-        if (row + 1 >= 0 && row + 1 < game.length) {
-            if (game[row + 1][col] == true) {
-                if ((row + 1) != previousPosition[0] || col != previousPosition[1]) {
-                    length = length + 1;
-                    if ((neighbors(row+1, col)<2) && ((row + 1) != headPosition[0] || col != headPosition[1])) {
-                        tail[0] = row + 1;
-                        tail[1] = col;
-                        tail[2] = length;
-                        return tail;
-                    }
-                    cp[0] = row + 1;
-                    cp[1] = col;
-                    findTailRecursive(currentPosition, cp);
-                }
-            }
+        if(currentPosition[0] == headPosition[0] && currentPosition[1] == headPosition[1]){
+            lengthR = 1;
+            int[] position = findNeighborPosition(previousPosition, currentPosition);
+            recursiveChecks ++;
+            return findTailRecursive(currentPosition, position);
+        }else if(neighbors(currentPosition[0],currentPosition[1])>=2){
+            lengthR++;
+            int[] position = findNeighborPosition(previousPosition, currentPosition);
+            recursiveChecks++;
+            return findTailRecursive(currentPosition, position);
+        } else if(neighbors(currentPosition[0],currentPosition[1]) < 2){
+            recursiveChecks++;
+            lengthR++;
+            tail[0] = currentPosition[0];
+            tail[1] = currentPosition[1];
+            tail[2] = lengthR;
+            return tail;
         }
         return tail;
     }
